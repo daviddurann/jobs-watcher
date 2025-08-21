@@ -20,6 +20,8 @@ SCHEMA = """
                                              last_seen TEXT NOT NULL,
                                              is_open INTEGER NOT NULL,
                                              closed_at TEXT,
+                                             pilot_score INTEGER DEFAULT 0,
+                                             description TEXT,
                                              UNIQUE (source, external_id)
              ); \
          """
@@ -57,23 +59,23 @@ def upsert_jobs(conn, jobs: List[Dict]) -> Tuple[List[Dict], List[Dict]]:
             # Nuevo
             conn.execute("""
                          INSERT INTO jobs (source, company, external_id, title, location, url, department, remote,
-                                           posted_at, updated_at, first_seen, last_seen, is_open, closed_at)
-                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, NULL)
+                                           posted_at, updated_at, first_seen, last_seen, is_open, closed_at, pilot_score, description)
+                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, NULL, ?, ?)
                          """, (
                              j.get("source"), j.get("company"), j.get("external_id"), j.get("title"), j.get("location"),
                              j.get("url"), j.get("department"), j.get("remote"),
-                             j.get("posted_at"), j.get("updated_at"), now, now
+                             j.get("posted_at"), j.get("updated_at"), now, now, j.get("pilot_score", 0), j.get("description", "")
                          ))
             opened.append(j)
         else:
             # Existe: refresca last_seen y campos básicos
             conn.execute("""
                          UPDATE jobs SET title=?, location=?, url=?, department=?, remote=?,
-                                         posted_at=?, updated_at=?, last_seen=?, company=?
+                                         posted_at=?, updated_at=?, last_seen=?, company=?, pilot_score=?, description=?
                          WHERE source=? AND external_id=?
                          """, (
                              j.get("title"), j.get("location"), j.get("url"), j.get("department"), j.get("remote"),
-                             j.get("posted_at"), j.get("updated_at"), now, j.get("company"),
+                             j.get("posted_at"), j.get("updated_at"), now, j.get("company"), j.get("pilot_score", 0), j.get("description", ""),
                              j["source"], j["external_id"]
                          ))
 
