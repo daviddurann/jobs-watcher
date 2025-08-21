@@ -48,7 +48,7 @@ def test_problematic_sites(targets: List[Dict]) -> List[Dict]:
     
     return tested_targets
 
-def run_enhanced(config_path="config_enhanced.yml", db_path="jobs.db"):
+def run(config_path="config_enhanced.yml", db_path="jobs.db"):
     start_time = datetime.now()
     logger.info(f"🚀 Starting ENHANCED job tracker run at {start_time}")
 
@@ -267,7 +267,7 @@ if __name__ == "__main__":
     db_path = os.getenv("DB_PATH", "jobs.db")
     
     try:
-        result = run_enhanced(config_path, db_path)
+        result = run(config_path, db_path)
         if result['success']:
             logger.info("🎉 Job tracking completed successfully!")
         else:
