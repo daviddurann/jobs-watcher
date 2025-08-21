@@ -1,0 +1,178 @@
+# Enhanced configuration for pilot job tracking
+# Environment variables: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+
+telegram:
+  bot_token: ""        # Set via TELEGRAM_BOT_TOKEN environment variable
+  chat_id: ""          # Set via TELEGRAM_CHAT_ID environment variable
+
+# Job filtering settings
+filtering:
+  pilot_jobs_only: true
+  minimum_pilot_score: 1
+
+targets:
+  # === GREENHOUSE COMPANIES ===
+  - company: "Southwest Airlines"
+    source: "greenhouse"
+    slug: "southwest"
+
+  - company: "JetBlue Airways"
+    source: "greenhouse"
+    slug: "jetblue"
+
+  - company: "Hawaiian Airlines"
+    source: "greenhouse"
+    slug: "hawaiianairlines"
+
+  # === LEVER COMPANIES ===
+  - company: "NetJets"
+    source: "lever"
+    slug: "netjets"
+
+  - company: "Flexjet"
+    source: "lever"
+    slug: "flexjet"
+
+  # === DIRECT API/JSON ENDPOINTS ===
+  - company: "American Airlines"
+    source: "json_api"
+    url: "https://careers.aa.com/api/jobs"
+    params:
+      location: ""
+      keyword: "pilot"
+
+  - company: "Delta Air Lines"
+    source: "workday"
+    url: "https://delta.wd1.myworkdayjobs.com/External"
+
+  - company: "United Airlines"
+    source: "workday"
+    url: "https://ual.wd5.myworkdayjobs.com/en-US/whiz"
+
+  - company: "Emirates"
+    source: "html"
+    url: "https://www.emiratesgroupcareers.com/search-and-apply"
+    selectors:
+      item: ".job-item"
+      title: ".job-title"
+      location: ".job-location"
+      url: "a::attr(href)"
+      description: ".job-description"
+
+  - company: "Lufthansa Group"
+    source: "html"
+    url: "https://careers.lufthansagroup.com/job-search"
+    selectors:
+      item: ".job-listing"
+      title: ".job-title h3"
+      location: ".job-location"
+      url: "a::attr(href)"
+      department: ".job-department"
+
+  - company: "Air France-KLM"
+    source: "playwright"
+    url: "https://careers.airfranceklm.com/jobs"
+    wait_for: ".job-card"
+    selectors:
+      item: ".job-card"
+      title: ".job-title"
+      location: ".job-location"
+      url: "a::attr(href)"
+
+  - company: "British Airways"
+    source: "playwright"
+    url: "https://careers.ba.com/search-results"
+    wait_for: ".job-result"
+    selectors:
+      item: ".job-result"
+      title: ".job-title"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Qatar Airways"
+    source: "html"
+    url: "https://careers.qatarairways.com/job-search"
+    selectors:
+      item: ".career-item"
+      title: ".career-title"
+      location: ".career-location"
+      url: "a::attr(href)"
+
+  - company: "Singapore Airlines"
+    source: "playwright"
+    url: "https://www.singaporeair.com/en_UK/careers/career-opportunities/"
+    wait_for: ".job-listing"
+    selectors:
+      item: ".job-listing"
+      title: ".job-title"
+      location: ".job-location"
+      url: "a::attr(href)"
+
+  - company: "Cathay Pacific"
+    source: "html"
+    url: "https://careers.cathaypacific.com/search"
+    selectors:
+      item: ".job-item"
+      title: ".job-title"
+      location: ".job-location"
+      url: "a::attr(href)"
+
+  # === REGIONAL AND CHARTER AIRLINES ===
+  - company: "Atlas Air"
+    source: "greenhouse"
+    slug: "atlasair"
+
+  - company: "Allegiant Air"
+    source: "html"
+    url: "https://careers.allegiantair.com/jobs"
+    selectors:
+      item: ".job-listing"
+      title: ".job-title"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Spirit Airlines"
+    source: "html"
+    url: "https://careers.spirit.com/jobs"
+    selectors:
+      item: ".job-item"
+      title: ".title"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Frontier Airlines"
+    source: "lever"
+    slug: "flyfrontier"
+
+  # === CARGO AIRLINES ===
+  - company: "FedEx"
+    source: "html"
+    url: "https://careers.fedex.com/fedex/jobs"
+    selectors:
+      item: ".job-item"
+      title: ".job-title"
+      location: ".job-location"
+      url: "a::attr(href)"
+
+  - company: "UPS Airlines"
+    source: "html"
+    url: "https://careers.ups.com/search-results"
+    selectors:
+      item: ".job-result"
+      title: ".job-title"
+      location: ".location"
+      url: "a::attr(href)"
+
+  # === BUSINESS AVIATION ===
+  - company: "Wheels Up"
+    source: "lever"
+    slug: "wheelsup"
+
+  - company: "Vista Global"
+    source: "html"
+    url: "https://careers.vistaglobal.com/jobs"
+    selectors:
+      item: ".job-listing"
+      title: ".job-title"
+      location: ".job-location"
+      url: "a::attr(href)"
