@@ -14,9 +14,13 @@ def fetch(url: str, wait_for: str, selectors: Dict) -> List[Dict]:
         for el in items:
             title = el.query_selector(selectors.get("title")).inner_text().strip() if selectors.get("title") else None
             location = el.query_selector(selectors.get("location")).inner_text().strip() if selectors.get("location") else None
+            description = el.query_selector(selectors.get("description")).inner_text().strip() if selectors.get("description") else ""
+            department = el.query_selector(selectors.get("department")).inner_text().strip() if selectors.get("department") else None
+
             job_el = el.query_selector(selectors.get("url")) if selectors.get("url") else None
             href = job_el.get_attribute("href") if job_el else None
             job_url = urljoin(url, href) if href else url
+
             out.append({
                 "source": "playwright",
                 "company": None,
@@ -24,10 +28,11 @@ def fetch(url: str, wait_for: str, selectors: Dict) -> List[Dict]:
                 "title": title,
                 "location": location,
                 "url": job_url,
-                "department": None,
+                "department": department,
                 "remote": None,
                 "posted_at": None,
                 "updated_at": None,
+                "description": description,
             })
         browser.close()
         return out
