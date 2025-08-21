@@ -39,6 +39,17 @@ def fetch_one(target: Dict) -> List[Dict]:
         for j in jobs:
             j["company"] = target.get("company")
 
+    elif source == "dynamic":
+        # New dynamic extractor for JavaScript-heavy sites
+        config = {
+            'company': target.get('company'),
+            'wait_for': target.get('wait_for', ''),
+            'selectors': target.get('selectors', {})
+        }
+        jobs = fetch_dynamic_jobs(target["url"], config)
+        for j in jobs:
+            j["company"] = j.get("company") or target.get("company")
+
     elif source == "workday":
         jobs = fetch_workday(target["url"])
         for j in jobs:
