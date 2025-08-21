@@ -7,8 +7,8 @@ This will test the specific sites mentioned in the requirements.
 import os
 import logging
 from extractors.dynamic_sites import fetch_dynamic_jobs
-from storage_enhanced import init_enhanced_db, upsert_jobs_enhanced, get_job_statistics
-from notifier_enhanced import send_test_notification
+from storage import init_enhanced_db, upsert_jobs_enhanced, get_job_statistics
+from notifier import send_test_notification
 from job_filter import add_pilot_score, filter_pilot_jobs
 
 # Set up logging
