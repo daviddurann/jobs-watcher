@@ -2,10 +2,14 @@
 
 A comprehensive Python system that automatically tracks commercial pilot job openings across multiple airlines and aviation companies worldwide, with real-time Telegram notifications for new and closed positions.
 
-## ✨ Key Features
+## ✨ Enhanced Features (2025)
 
-- **🎯 Pilot-Specific Filtering**: Advanced filtering for pilot, copilot, first officer, captain, and pilot cadet positions
-- **🌐 Multi-Source Data Collection**: Supports Greenhouse API, Lever API, Workday sites, and generic web scraping
+- **🎯 Dynamic Job Board Support**: Supports Bizneo, SuccessFactors, Oracle, Workday platforms
+- **🔍 JavaScript-Heavy Site Detection**: Advanced Playwright integration with anti-bot evasion
+- **📊 Enhanced Job Tracking**: Smart deduplication, status management (open/closed/reopened)
+- **📱 Smart Notifications**: Change-only updates, no duplicate alerts, intelligent grouping
+- **🚨 Comprehensive Logging**: Clear error reporting and statistics
+- **🌐 Multi-Source Data Collection**: Supports Greenhouse API, Lever API, Workday sites, and dynamic scraping
 - **📱 Real-Time Notifications**: Instant Telegram alerts for job openings and closures
 - **🔍 Intelligent Change Detection**: Accurately tracks job status changes over time
 - **⚡ Automated Scheduling**: Runs every 15 minutes via GitHub Actions (free tier compatible)
