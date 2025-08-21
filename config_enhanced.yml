@@ -198,22 +198,24 @@ targets:
 
   - company: "Air Europa"
     region: "Europe"
-    source: "html"
+    source: "dynamic"
     url: "https://jobs.aireuropa.bizneo.cloud/jobs"
+    wait_for: ".job-offer, .job-item, .job-card"
     selectors:
-      item: ".job-card, .career-item, .position"
-      title: ".job-title, h3, .title"
-      location: ".location"
+      item: ".job-offer, .job-item, .job-card, .career-item, .position"
+      title: ".job-title, h3, .title, [data-job-title]"
+      location: ".job-location, .location, .city"
       url: "a::attr(href)"
 
   - company: "Binter Canarias"
     region: "Europe"
-    source: "html"
+    source: "dynamic"
     url: "https://trabajaconnosotros.bintercanarias.com/jobs"
+    wait_for: ".job-offer, .job-item, .job-card"
     selectors:
-      item: ".job-card, .career-item, .position"
-      title: ".job-title, h3, .title"
-      location: ".location"
+      item: ".job-offer, .job-item, .job-card, .career-item, .position"
+      title: ".job-title, h3, .title, [data-job-title]"
+      location: ".job-location, .location, .city"
       url: "a::attr(href)"
 
   # === US MAJOR AIRLINES ===
