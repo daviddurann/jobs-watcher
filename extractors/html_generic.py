@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 
 def fetch(url: str, selectors: Dict) -> List[Dict]:
-    r = requests.get(url, timeout=30, headers={"User-Agent": "jobs-watcher/1.0"})
+    r = requests.get(url, timeout=30, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"})
     r.raise_for_status()
     soup = BeautifulSoup(r.text, "html.parser")
     items = soup.select(selectors["item"])
@@ -13,6 +13,9 @@ def fetch(url: str, selectors: Dict) -> List[Dict]:
     for el in items:
         title_el = el.select_one(selectors.get("title"))
         location_el = el.select_one(selectors.get("location",""))
+        description_el = el.select_one(selectors.get("description", ""))
+        department_el = el.select_one(selectors.get("department", ""))
+
         url_sel = selectors.get("url")
         href = None
         if url_sel and "::attr(" in url_sel:
@@ -30,6 +33,8 @@ def fetch(url: str, selectors: Dict) -> List[Dict]:
 
         title = title_el.get_text(strip=True) if title_el else None
         location = location_el.get_text(strip=True) if location_el else None
+        description = description_el.get_text(strip=True) if description_el else ""
+        department = department_el.get_text(strip=True) if department_el else None
         external_id = job_url  # si no hay ID propio, usa URL como external_id
 
         out.append({
@@ -39,9 +44,10 @@ def fetch(url: str, selectors: Dict) -> List[Dict]:
             "title": title,
             "location": location,
             "url": job_url,
-            "department": None,
+            "department": department,
             "remote": None,
             "posted_at": None,
             "updated_at": None,
+            "description": description,
         })
     return out
