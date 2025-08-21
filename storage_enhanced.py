@@ -203,12 +203,11 @@ def upsert_jobs_enhanced(conn, jobs: List[Dict]) -> Tuple[List[Dict], List[Dict]
                 job.get("description", ""), job_hash
             ))
             
-            job_id = conn.lastrowid
-            
             # Record status change
-            conn.execute(
+            cur = conn.cursor()
+            cur.execute(
                 "INSERT INTO job_status_history (job_id, status_change, changed_at) VALUES (?, 'opened', ?)",
-                (job_id, now)
+                (cur.lastrowid, now)
             )
             
             opened.append(job)
