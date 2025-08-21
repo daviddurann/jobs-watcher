@@ -7,6 +7,7 @@ from .workday import fetch as fetch_workday
 from .json_api import fetch as fetch_json_api
 from .indeed_api import fetch as fetch_indeed
 from .aviation_jobs import fetch as fetch_aviation_jobs
+from .dynamic_sites import fetch_dynamic_jobs
 
 # Import job filter functions
 import sys
