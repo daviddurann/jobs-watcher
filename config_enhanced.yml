@@ -2,8 +2,8 @@
 # Variables de entorno: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
 
 telegram:
-  bot_token: "7759383136:AAGXkePLpQ2SMWorMfUwGXc-_Jj9JTdVtL8"        # Set via TELEGRAM_BOT_TOKEN environment variable
-  chat_id: "1661173884"          # Set via TELEGRAM_CHAT_ID environment variable
+  bot_token: ""        # Set via TELEGRAM_BOT_TOKEN environment variable
+  chat_id: ""          # Set via TELEGRAM_CHAT_ID environment variable
 
 # Configuración de filtrado
 filtering:
