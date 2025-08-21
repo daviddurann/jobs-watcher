@@ -1,0 +1,71 @@
+# Test configuration with problematic sites and a few working ones
+# Used for testing the enhanced job scraper
+
+telegram:
+  bot_token: ""        # Set via TELEGRAM_BOT_TOKEN environment variable
+  chat_id: ""          # Set via TELEGRAM_CHAT_ID environment variable
+
+# Configuration for filtering
+filtering:
+  pilot_jobs_only: true
+  minimum_pilot_score: 1
+
+targets:
+  # === PROBLEMATIC SITES (Now using dynamic extractor) ===
+  
+  - company: "Air Europa"
+    region: "Europe"
+    source: "dynamic"
+    url: "https://jobs.aireuropa.bizneo.cloud/jobs"
+    wait_for: ".job-offer, .job-item, .job-card"
+    selectors:
+      item: ".job-offer, .job-item, .job-card, .career-item, .position"
+      title: ".job-title, h3, .title, [data-job-title]"
+      location: ".job-location, .location, .city"
+      url: "a::attr(href)"
+
+  - company: "Binter Canarias"
+    region: "Europe"
+    source: "dynamic"
+    url: "https://trabajaconnosotros.bintercanarias.com/jobs"
+    wait_for: ".job-offer, .job-item, .job-card"
+    selectors:
+      item: ".job-offer, .job-item, .job-card, .career-item, .position"
+      title: ".job-title, h3, .title, [data-job-title]"
+      location: ".job-location, .location, .city"
+      url: "a::attr(href)"
+
+  - company: "Wizz Air"
+    region: "Europe"
+    source: "dynamic"
+    url: "https://careers.wizzair.com/go/Pilot-Jobs/5258601/"
+    wait_for: ".job-listing, .job-item, .job-card"
+    selectors:
+      item: ".job-listing, .job-item, .job-card, .position, .career-item"
+      title: ".job-title, h3, .title, [data-job-title]"
+      location: ".job-location, .location, .city"
+      url: "a::attr(href)"
+
+  # === WORKING SITES (For comparison) ===
+
+  - company: "Emirates"
+    region: "Middle East"
+    source: "html"
+    url: "https://www.emiratesgroupcareers.com/search-and-apply/pilots/"
+    selectors:
+      item: ".search-result-item, .job-card"
+      title: ".job-title, h3"
+      location: ".job-location, .location"
+      url: "a::attr(href)"
+
+  # === API SOURCES (Usually reliable) ===
+
+  - company: "Uber (Aviation Division)"
+    region: "Global"
+    source: "greenhouse"
+    slug: "uber"
+
+  - company: "Airbnb (Travel/Aviation)"
+    region: "Global"
+    source: "greenhouse"
+    slug: "airbnb"
