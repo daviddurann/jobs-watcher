@@ -1,0 +1,35 @@
+# config.yml - configuración de tu bot de alertas de empleo aeronáutico
+
+telegram:
+  bot_token: "7759383136:AAGXkePLpQ2SMWorMfUwGXc-_Jj9JTdVtL8"        # Sustituye por el token de tu bot
+  chat_id: "1661173884"            # Tu chat ID de Telegram
+
+targets:
+  - company: "Ryanair"
+    source: "playwright"
+    url: "https://careers.ryanair.com/jobs/"
+    wait_for: "div.job-listing"
+    selectors:
+      item: "div.job-listing"
+      title: "h3.job-title"
+      location: "p.job-location"
+      url: "a::attr(href)"
+
+  - company: "Vueling"
+    source: "playwright"
+    url: "https://careers.vueling.com/jobs"
+    wait_for: "li.job-item"
+    selectors:
+      item: "li.job-item"
+      title: "h3.job-title"
+      location: "span.job-location"
+      url: "a::attr(href)"
+
+  - company: "JetMagic"
+    source: "html"
+    url: "https://jetmagic.com/careers"
+    selectors:
+      item: ".job-card"
+      title: ".job-title"
+      location: ".job-location"
+      url: "a::attr(href)"
