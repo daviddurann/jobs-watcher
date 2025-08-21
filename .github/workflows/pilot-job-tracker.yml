@@ -2,8 +2,8 @@ name: Pilot Job Tracker - Enhanced
 
 on:
   schedule:
-    # Run every 15 minutes
-    - cron: '*/15 * * * *'
+    # Run every 10 minutes
+    - cron: '*/10 * * * *'
 
   # Allow manual triggering for testing
   workflow_dispatch:
