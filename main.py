@@ -7,11 +7,11 @@ and status management.
 import os, sys, yaml, time, logging
 from typing import List, Dict
 from datetime import datetime
-from storage_enhanced import (
+from storage import (
     init_enhanced_db, upsert_jobs_enhanced, start_scraping_run, 
     finish_scraping_run, get_job_statistics, cleanup_old_data
 )
-from notifier_enhanced import notify_changes_enhanced
+from notifier import notify_changes_enhanced
 from extractors import fetch_one
 from job_filter import filter_pilot_jobs
 import traceback
