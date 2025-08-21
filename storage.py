@@ -33,8 +33,17 @@ def init_db(path="jobs.db"):
     conn = sqlite3.connect(path)
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute(SCHEMA)
+
+    # Paso adicional: agregar columna pilot_score si no existe
+    cur = conn.execute("PRAGMA table_info(jobs)")
+    columns = [row[1] for row in cur.fetchall()]  # nombres de columnas
+    if "pilot_score" not in columns:
+        conn.execute("ALTER TABLE jobs ADD COLUMN pilot_score INTEGER DEFAULT 0")
+        print("→ Columna 'pilot_score' agregada a la tabla 'jobs'")
+
     conn.commit()
     return conn
+
 
 def snapshot_open_jobs(conn) -> Dict[Tuple[str,str], Dict]:
     cur = conn.execute("SELECT source, external_id FROM jobs WHERE is_open=1")

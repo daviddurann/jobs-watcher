@@ -1,178 +1,743 @@
-# Enhanced configuration for pilot job tracking
-# Environment variables: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+# CONFIGURACIÓN MASIVA - TODAS LAS AEROLÍNEAS DEL MUNDO 2025
+# Variables de entorno: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
 
 telegram:
-  bot_token: ""        # Set via TELEGRAM_BOT_TOKEN environment variable
-  chat_id: ""          # Set via TELEGRAM_CHAT_ID environment variable
+  bot_token: "7759383136:AAGXkePLpQ2SMWorMfUwGXc-_Jj9JTdVtL8"        # Set via TELEGRAM_BOT_TOKEN environment variable
+  chat_id: "1661173884"          # Set via TELEGRAM_CHAT_ID environment variable
 
-# Job filtering settings
+# Configuración de filtrado
 filtering:
   pilot_jobs_only: true
   minimum_pilot_score: 1
 
 targets:
-  # === GREENHOUSE COMPANIES ===
-  - company: "Southwest Airlines"
-    source: "greenhouse"
-    slug: "southwest"
+  # === AEROLÍNEAS ESPAÑOLAS ===
 
-  - company: "JetBlue Airways"
-    source: "greenhouse"
-    slug: "jetblue"
-
-  - company: "Hawaiian Airlines"
-    source: "greenhouse"
-    slug: "hawaiianairlines"
-
-  # === LEVER COMPANIES ===
-  - company: "NetJets"
-    source: "lever"
-    slug: "netjets"
-
-  - company: "Flexjet"
-    source: "lever"
-    slug: "flexjet"
-
-  # === DIRECT API/JSON ENDPOINTS ===
-  - company: "American Airlines"
-    source: "json_api"
-    url: "https://careers.aa.com/api/jobs"
-    params:
-      location: ""
-      keyword: "pilot"
-
-  - company: "Delta Air Lines"
-    source: "workday"
-    url: "https://delta.wd1.myworkdayjobs.com/External"
-
-  - company: "United Airlines"
-    source: "workday"
-    url: "https://ual.wd5.myworkdayjobs.com/en-US/whiz"
-
-  - company: "Emirates"
+  - company: "Binter Canarias"
     source: "html"
-    url: "https://www.emiratesgroupcareers.com/search-and-apply"
+    url: "https://trabajaconnosotros.bintercanarias.com/jobs"
     selectors:
-      item: ".job-item"
-      title: ".job-title"
-      location: ".job-location"
+      item: "a[href*='/jobs/']"
+      title: ""  # Usará el texto del elemento principal
+      location: ""  # Se puede dejar vacío
+      url: "::attr(href)"
+
+  - company: "Iberia"
+    source: "html"
+    url: "https://trabajaconnosotros.iberia.es/go/Pilotos/9055202/"
+    selectors:
+      item: "a[href*='/jobs/']"
+      title: ""  # Usará el texto del elemento principal
+      location: ""  # Se puede dejar vacío
+      url: "::attr(href)"
+
+  - company: "Vueling"
+    source: "html"
+    url: "https://careers.vueling.com/jobs"
+    selectors:
+      item: ".job-card, .career-opportunity"
+      title: ".title, h3"
+      location: ".location"
       url: "a::attr(href)"
-      description: ".job-description"
+
+  - company: "Air Europa"
+    source: "html"
+    url: "https://vacantes.aireuropa.com/jobs"
+    selectors:
+      item: "a[href*='/jobs/']"
+      title: ""  # Usará el texto del elemento principal
+      location: ""  # Se puede dejar vacío
+      url: "::attr(href)"
+
+  # === AEROLÍNEAS EUROPEAS PRINCIPALES ===
 
   - company: "Lufthansa Group"
     source: "html"
-    url: "https://careers.lufthansagroup.com/job-search"
+    url: "https://careers.lufthansagroup.com/job-search?search_type=1&categories=8"
     selectors:
-      item: ".job-listing"
-      title: ".job-title h3"
-      location: ".job-location"
+      item: ".job-listing, .position"
+      title: ".title, h3"
+      location: ".location, .city"
       url: "a::attr(href)"
-      department: ".job-department"
 
-  - company: "Air France-KLM"
-    source: "playwright"
-    url: "https://careers.airfranceklm.com/jobs"
-    wait_for: ".job-card"
+  - company: "Air France"
+    source: "html"
+    url: "https://careers.airfranceklm.com/job-offers"
     selectors:
-      item: ".job-card"
-      title: ".job-title"
-      location: ".job-location"
+      item: ".job-card, .offer"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "KLM Royal Dutch Airlines"
+    source: "html"
+    url: "https://careers.klm.com/job-search"
+    selectors:
+      item: ".job-item, .vacancy"
+      title: ".title, h3"
+      location: ".location"
       url: "a::attr(href)"
 
   - company: "British Airways"
-    source: "playwright"
-    url: "https://careers.ba.com/search-results"
-    wait_for: ".job-result"
+    source: "html"
+    url: "https://careers.ba.com/search-results?q=pilot"
     selectors:
-      item: ".job-result"
-      title: ".job-title"
+      item: ".job-result, .position"
+      title: ".title, h3"
       location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Swiss International Air Lines"
+    source: "html"
+    url: "https://www.swiss.com/ch/en/about-swiss/career"
+    selectors:
+      item: ".job-listing, .career-item"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Austrian Airlines"
+    source: "html"
+    url: "https://www.austrian.com/gb/en/career"
+    selectors:
+      item: ".job-offer, .position"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Ryanair"
+    source: "html"
+    url: "https://careers.ryanair.com/jobs"
+    selectors:
+      item: ".job-card, .position"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "easyJet"
+    source: "html"
+    url: "https://careers.easyjet.com/search/?q=pilot"
+    selectors:
+      item: ".job-item, .result"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Wizz Air"
+    source: "html"
+    url: "https://jobs.wizzair.com/jobs/search?search_type=1&categories=8"
+    selectors:
+      item: ".job-listing, .position"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "SAS Scandinavian Airlines"
+    source: "html"
+    url: "https://careers.flysas.com/job-search"
+    selectors:
+      item: ".job-card, .position"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "TAP Air Portugal"
+    source: "html"
+    url: "https://careers.flytap.com/job-search"
+    selectors:
+      item: ".job-item, .vacancy"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  # === AEROLÍNEAS ESTADOUNIDENSES ===
+
+  - company: "Delta Air Lines"
+    source: "html"
+    url: "https://careers.delta.com/search/?q=pilot"
+    selectors:
+      item: ".job-listing, .position"
+      title: ".job-title, h3"
+      location: ".job-location, .location"
+      url: "a::attr(href)"
+
+  - company: "American Airlines"
+    source: "html"
+    url: "https://jobs.aa.com/search/?q=pilot"
+    selectors:
+      item: ".jobTitle-container, .job-item"
+      title: ".jobTitle a, .title"
+      location: ".jobLocation, .location"
+      url: "a::attr(href)"
+
+  - company: "United Airlines"
+    source: "html"
+    url: "https://careers.united.com/us/en/search-results?keywords=pilot"
+    selectors:
+      item: ".jobs-list-item, .job-card"
+      title: ".job-title, h3"
+      location: ".job-location, .location"
+      url: "a::attr(href)"
+
+  - company: "Southwest Airlines"
+    source: "html"
+    url: "https://careers.southwestair.com/search/?q=pilot"
+    selectors:
+      item: ".job-result-item, .position"
+      title: ".job-result-title, .title"
+      location: ".job-result-location, .location"
+      url: "a::attr(href)"
+
+  - company: "JetBlue Airways"
+    source: "html"
+    url: "https://careers.jetblue.com/search/?q=pilot"
+    selectors:
+      item: ".job-item, .position"
+      title: ".job-title, .title"
+      location: ".job-location, .location"
+      url: "a::attr(href)"
+
+  - company: "Alaska Airlines"
+    source: "html"
+    url: "https://careers.alaskaair.com/search/?q=pilot"
+    selectors:
+      item: ".job-listing, .career-item"
+      title: ".job-title, .title"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Hawaiian Airlines"
+    source: "html"
+    url: "https://careers.hawaiianairlines.com/search/?q=pilot"
+    selectors:
+      item: ".job-card, .position"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Spirit Airlines"
+    source: "html"
+    url: "https://careers.spirit.com/search/?q=pilot"
+    selectors:
+      item: ".job-card, .position"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Frontier Airlines"
+    source: "html"
+    url: "https://careers.flyfrontier.com/search/?q=pilot"
+    selectors:
+      item: ".job-item, .position"
+      title: ".job-title, .title"
+      location: ".location"
+      url: "a::attr(href)"
+
+  # === AEROLÍNEAS REGIONALES US ===
+
+  - company: "PSA Airlines (American Regional)"
+    source: "html"
+    url: "https://www.psaairlines.com/careers"
+    selectors:
+      item: ".career-opportunity, .job-card"
+      title: ".title, h3, .job-title"
+      location: ".location"
+      url: "a::attr(href)"
+      description: ".description, .summary"
+
+  - company: "Envoy Air (American Regional)"
+    source: "html"
+    url: "https://www.envoyair.com/careers/"
+    selectors:
+      item: ".job-listing, .career-item, .position"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Republic Airways"
+    source: "html"
+    url: "https://rjet.com/careers"
+    selectors:
+      item: ".job-item, .career-listing"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "SkyWest Airlines"
+    source: "html"
+    url: "https://www.skywest.com/careers/pilot-careers/"
+    selectors:
+      item: ".career-listing, .job-card"
+      title: ".career-title, .title"
+      location: ".career-location, .location"
+      url: "a::attr(href)"
+
+  - company: "Mesa Airlines"
+    source: "html"
+    url: "https://www.mesa-air.com/careers/"
+    selectors:
+      item: ".career-opportunity, .job-listing"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "GoJet Airlines"
+    source: "html"
+    url: "https://www.gojetairlines.com/careers"
+    selectors:
+      item: ".job-posting, .career-opportunity"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Piedmont Airlines"
+    source: "html"
+    url: "https://www.piedmont-airlines.com/careers/"
+    selectors:
+      item: ".job-item, .career-item"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  # === AEROLÍNEAS DE CARGA ===
+
+  - company: "FedEx Express"
+    source: "html"
+    url: "https://careers.fedex.com/fedex/jobs?keywords=pilot&stretch=10&stretchUnit=MILES"
+    selectors:
+      item: ".job-tile, .job-item"
+      title: ".job-title, h3"
+      location: ".job-location, .location"
+      url: "a::attr(href)"
+
+  - company: "UPS Airlines"
+    source: "html"
+    url: "https://www.jobs-ups.com/search/?q=pilot"
+    selectors:
+      item: ".job-result-item, .search-result"
+      title: ".job-result-title, .job-title"
+      location: ".job-result-location, .location"
+      url: "a::attr(href)"
+
+  - company: "Atlas Air"
+    source: "html"
+    url: "https://www.atlasair.com/careers/"
+    selectors:
+      item: ".job-listing, .career-item"
+      title: ".job-title, .title"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Kalitta Air"
+    source: "html"
+    url: "https://www.kalittaair.com/careers/"
+    selectors:
+      item: ".job-listing, .career-item"
+      title: ".job-title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Ameriflight"
+    source: "html"
+    url: "https://www.ameriflight.com/careers/"
+    selectors:
+      item: ".career-opportunity, .job-card"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  # === AEROLÍNEAS DEL ORIENTE MEDIO ===
+
+  - company: "Emirates"
+    source: "html"
+    url: "https://www.emiratesgroupcareers.com/search-and-apply/?keywords=pilot"
+    selectors:
+      item: ".search-result-item, .job-card"
+      title: ".job-title, h3"
+      location: ".job-location, .location"
       url: "a::attr(href)"
 
   - company: "Qatar Airways"
     source: "html"
-    url: "https://careers.qatarairways.com/job-search"
+    url: "https://careers.qatarairways.com/job-search?search_type=1&categories=8"
     selectors:
-      item: ".career-item"
-      title: ".career-title"
-      location: ".career-location"
+      item: ".job-item, .career-item"
+      title: ".job-title, h3"
+      location: ".job-location, .location"
       url: "a::attr(href)"
 
-  - company: "Singapore Airlines"
-    source: "playwright"
-    url: "https://www.singaporeair.com/en_UK/careers/career-opportunities/"
-    wait_for: ".job-listing"
+  - company: "Etihad Airways"
+    source: "html"
+    url: "https://careers.etihad.com/job-search"
     selectors:
-      item: ".job-listing"
-      title: ".job-title"
-      location: ".job-location"
+      item: ".job-listing, .position"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Riyadh Air"
+    source: "html"
+    url: "https://careers.riyadhair.com/job-search"
+    selectors:
+      item: ".job-card, .opportunity"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "flyadeal"
+    source: "html"
+    url: "https://careers.flyadeal.com/jobs"
+    selectors:
+      item: ".job-item, .position"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Saudia"
+    source: "html"
+    url: "https://careers.saudia.com/job-search"
+    selectors:
+      item: ".job-listing, .career-item"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  # === AEROLÍNEAS ASIÁTICAS ===
+
+  - company: "Singapore Airlines"
+    source: "html"
+    url: "https://www.singaporeair.com/en_UK/careers/career-opportunities/"
+    selectors:
+      item: ".job-listing, .career-item"
+      title: ".job-title, .title"
+      location: ".job-location, .location"
       url: "a::attr(href)"
 
   - company: "Cathay Pacific"
     source: "html"
     url: "https://careers.cathaypacific.com/search"
     selectors:
-      item: ".job-item"
-      title: ".job-title"
-      location: ".job-location"
+      item: ".job-item, .position"
+      title: ".job-title, .title"
+      location: ".job-location, .location"
       url: "a::attr(href)"
 
-  # === REGIONAL AND CHARTER AIRLINES ===
-  - company: "Atlas Air"
-    source: "greenhouse"
-    slug: "atlasair"
-
-  - company: "Allegiant Air"
+  - company: "ANA (All Nippon Airways)"
     source: "html"
-    url: "https://careers.allegiantair.com/jobs"
+    url: "https://www.ana.co.jp/group/en/careers/"
     selectors:
-      item: ".job-listing"
-      title: ".job-title"
+      item: ".job-listing, .career-item"
+      title: ".title, h3"
       location: ".location"
       url: "a::attr(href)"
 
-  - company: "Spirit Airlines"
+  - company: "Japan Airlines (JAL)"
     source: "html"
-    url: "https://careers.spirit.com/jobs"
+    url: "https://www.jal.com/en/careers/"
     selectors:
-      item: ".job-item"
-      title: ".title"
+      item: ".job-card, .position"
+      title: ".title, h3"
       location: ".location"
       url: "a::attr(href)"
 
-  - company: "Frontier Airlines"
-    source: "lever"
-    slug: "flyfrontier"
-
-  # === CARGO AIRLINES ===
-  - company: "FedEx"
+  - company: "Korean Air"
     source: "html"
-    url: "https://careers.fedex.com/fedex/jobs"
+    url: "https://careers.koreanair.com/job-search"
     selectors:
-      item: ".job-item"
-      title: ".job-title"
-      location: ".job-location"
-      url: "a::attr(href)"
-
-  - company: "UPS Airlines"
-    source: "html"
-    url: "https://careers.ups.com/search-results"
-    selectors:
-      item: ".job-result"
-      title: ".job-title"
+      item: ".job-item, .career-item"
+      title: ".title, h3"
       location: ".location"
       url: "a::attr(href)"
 
-  # === BUSINESS AVIATION ===
+  - company: "Thai Airways"
+    source: "html"
+    url: "https://www.thaiairways.com/en_TH/about_thai/career/"
+    selectors:
+      item: ".job-listing, .career-opportunity"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Malaysia Airlines"
+    source: "html"
+    url: "https://careers.malaysiaairlines.com/job-search"
+    selectors:
+      item: ".job-card, .position"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Cebu Pacific"
+    source: "html"
+    url: "https://careers.cebupacificair.com/job-search"
+    selectors:
+      item: ".job-item, .career-item"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Air India"
+    source: "html"
+    url: "https://careers.airindia.in/job-search"
+    selectors:
+      item: ".job-listing, .position"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "IndiGo"
+    source: "html"
+    url: "https://careers.goindigo.in/job-search"
+    selectors:
+      item: ".job-card, .career-item"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  # === AEROLÍNEAS AUSTRALIANAS ===
+
+  - company: "Qantas"
+    source: "html"
+    url: "https://careers.qantas.com/search/?q=pilot"
+    selectors:
+      item: ".job-item, .position"
+      title: ".job-title, .title"
+      location: ".job-location, .location"
+      url: "a::attr(href)"
+
+  - company: "Virgin Australia"
+    source: "html"
+    url: "https://careers.virginaustralia.com/search/?q=pilot"
+    selectors:
+      item: ".job-listing, .career-item"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Jetstar"
+    source: "html"
+    url: "https://careers.jetstar.com/search/?q=pilot"
+    selectors:
+      item: ".job-card, .position"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  # === AEROLÍNEAS CANADIENSES ===
+
+  - company: "Air Canada"
+    source: "html"
+    url: "https://careers.aircanada.com/search/?q=pilot"
+    selectors:
+      item: ".job-item, .position"
+      title: ".job-title, .title"
+      location: ".job-location, .location"
+      url: "a::attr(href)"
+
+  - company: "WestJet"
+    source: "html"
+    url: "https://careers.westjet.com/search/?q=pilot"
+    selectors:
+      item: ".job-listing, .career-item"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  # === AEROLÍNEAS LATINOAMERICANAS ===
+
+  - company: "LATAM Airlines"
+    source: "html"
+    url: "https://careers.latam.com/job-search?search_type=1&categories=8"
+    selectors:
+      item: ".job-card, .position"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Avianca"
+    source: "html"
+    url: "https://careers.avianca.com/job-search"
+    selectors:
+      item: ".job-item, .career-item"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Copa Airlines"
+    source: "html"
+    url: "https://careers.copaair.com/job-search"
+    selectors:
+      item: ".job-listing, .position"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Aeromexico"
+    source: "html"
+    url: "https://careers.aeromexico.com/job-search"
+    selectors:
+      item: ".job-card, .career-item"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Gol Linhas Aéreas"
+    source: "html"
+    url: "https://careers.voegol.com.br/job-search"
+    selectors:
+      item: ".job-item, .position"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  # === AEROLÍNEAS AFRICANAS ===
+
+  - company: "South African Airways"
+    source: "html"
+    url: "https://careers.flysaa.com/job-search"
+    selectors:
+      item: ".job-listing, .career-item"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Ethiopian Airlines"
+    source: "html"
+    url: "https://careers.ethiopianairlines.com/job-search"
+    selectors:
+      item: ".job-card, .position"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Kenya Airways"
+    source: "html"
+    url: "https://careers.kenya-airways.com/job-search"
+    selectors:
+      item: ".job-item, .career-item"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  # === AEROLÍNEAS DE BAJO COSTE INTERNACIONALES ===
+
+  - company: "Ryanair"
+    source: "html"
+    url: "https://careers.ryanair.com/jobs"
+    selectors:
+      item: ".job-card, .position"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Pegasus Airlines"
+    source: "html"
+    url: "https://careers.flypgs.com/job-search"
+    selectors:
+      item: ".job-listing, .career-item"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "Norwegian Air"
+    source: "html"
+    url: "https://careers.norwegian.com/job-search"
+    selectors:
+      item: ".job-card, .position"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
+
+  # === AVIACIÓN EJECUTIVA/BUSINESS ===
+
+  - company: "NetJets"
+    source: "html"
+    url: "https://careers.netjets.com/search/?q=pilot"
+    selectors:
+      item: ".job-listing, .position"
+      title: ".job-title, .title"
+      location: ".job-location, .location"
+      url: "a::attr(href)"
+
+  - company: "FlexJet"
+    source: "html"
+    url: "https://www.flexjet.com/careers/search/?q=pilot"
+    selectors:
+      item: ".job-card, .career-item"
+      title: ".job-title, .title"
+      location: ".location"
+      url: "a::attr(href)"
+
   - company: "Wheels Up"
-    source: "lever"
-    slug: "wheelsup"
+    source: "html"
+    url: "https://careers.wheelsup.com/search/?q=pilot"
+    selectors:
+      item: ".job-item, .position"
+      title: ".title, h3"
+      location: ".location"
+      url: "a::attr(href)"
 
   - company: "Vista Global"
     source: "html"
     url: "https://careers.vistaglobal.com/jobs"
     selectors:
-      item: ".job-listing"
-      title: ".job-title"
-      location: ".job-location"
+      item: ".job-listing, .career-item"
+      title: ".job-title, .title"
+      location: ".job-location, .location"
       url: "a::attr(href)"
+
+  # === SITIOS ESPECIALIZADOS ===
+
+  - company: "USAJOBS (Federal Aviation)"
+    source: "html"
+    url: "https://www.usajobs.gov/Search/Results?k=pilot"
+    selectors:
+      item: ".usajobs-search-result, .search-result"
+      title: ".usajobs-search-result__title, .job-title"
+      location: ".usajobs-search-result__location, .location"
+      url: "a::attr(href)"
+
+  - company: "Indeed - Pilot Jobs Worldwide"
+    source: "html"
+    url: "https://www.indeed.com/jobs?q=airline+pilot&l="
+    selectors:
+      item: ".job_seen_beacon, [data-jk]"
+      title: ".jobTitle a, h2 a"
+      location: ".companyLocation"
+      url: "h2 a::attr(href)"
+
+  - company: "JSFirm - Aviation Jobs"
+    source: "html"
+    url: "https://www.jsfirm.com/jobs?search=pilot"
+    selectors:
+      item: ".job-listing, .job-item"
+      title: ".job-title, .title"
+      location: ".location"
+      url: "a::attr(href)"
+
+  - company: "AvCrew - Aviation Careers"
+    source: "html"
+    url: "https://www.avcrew.com/pilot-jobs"
+    selectors:
+      item: ".job-posting, .job-item"
+      title: ".job-title, .title"
+      location: ".location"
+      url: "a::attr(href)"
+
+  # === APIS GREENHOUSE/LEVER (GRANDES TECH CON TRANSPORTE) ===
+
+  - company: "Uber (Aviation/Transport Division)"
+    source: "greenhouse"
+    slug: "uber"
+
+  - company: "Lyft (Aviation Services)"
+    source: "greenhouse"
+    slug: "lyft"
+
+  - company: "DoorDash (Aviation/Logistics)"
+    source: "greenhouse"
+    slug: "doordash"
+
+  - company: "Airbnb (Travel/Aviation)"
+    source: "greenhouse"
+    slug: "airbnb"
