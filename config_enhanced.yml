@@ -76,12 +76,13 @@ targets:
 
   - company: "Wizz Air"
     region: "Europe"
-    source: "html"
+    source: "dynamic"
     url: "https://careers.wizzair.com/go/Pilot-Jobs/5258601/"
+    wait_for: ".job-listing, .job-item, .job-card"
     selectors:
-      item: ".job-listing, .position, .career-item"
-      title: ".job-title, h3, .title"
-      location: ".location"
+      item: ".job-listing, .job-item, .job-card, .position, .career-item"
+      title: ".job-title, h3, .title, [data-job-title]"
+      location: ".job-location, .location, .city"
       url: "a::attr(href)"
 
   - company: "Swiss International Air Lines"
