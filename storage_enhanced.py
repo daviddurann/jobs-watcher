@@ -188,8 +188,9 @@ def upsert_jobs_enhanced(conn, jobs: List[Dict]) -> Tuple[List[Dict], List[Dict]
         row = cur.fetchone()
         
         if row is None:
-            # New job
-            conn.execute("""
+            # Record status change
+            cur = conn.cursor()
+            cur.execute("""
                 INSERT INTO jobs (
                     source, company, external_id, title, location, url, department, remote,
                     posted_at, updated_at, first_seen, last_seen, is_open, closed_at, 
@@ -203,11 +204,12 @@ def upsert_jobs_enhanced(conn, jobs: List[Dict]) -> Tuple[List[Dict], List[Dict]
                 job.get("description", ""), job_hash
             ))
             
+            job_id = cur.lastrowid
+            
             # Record status change
-            cur = conn.cursor()
             cur.execute(
                 "INSERT INTO job_status_history (job_id, status_change, changed_at) VALUES (?, 'opened', ?)",
-                (cur.lastrowid, now)
+                (job_id, now)
             )
             
             opened.append(job)
