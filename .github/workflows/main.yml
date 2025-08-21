@@ -2,7 +2,7 @@ name: Pilot Job Tracker
 
 on:
   schedule:
-    # Run every 15 minutes
+    # Run every 15 minutes (UTC)
     - cron: '*/15 * * * *'
 
   # Allow manual triggering
@@ -40,7 +40,7 @@ jobs:
         run: python main.py
 
       - name: Upload database as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: jobs-database-${{ github.run_number }}
@@ -48,7 +48,7 @@ jobs:
           retention-days: 30
 
       - name: Upload logs as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: logs-${{ github.run_number }}
