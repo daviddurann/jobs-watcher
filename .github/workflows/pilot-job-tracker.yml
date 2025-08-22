@@ -2,8 +2,8 @@ name: Pilot Job Tracker - Enhanced
 
 on:
   schedule:
-    # Run every 10 minutes
-    - cron: '*/10 * * * *'
+    # Run at 00:00, 10:00 and 20:00 UTC every day
+    - cron: '0 0,10,20 * * *'
 
   # Allow manual triggering for testing
   workflow_dispatch:
@@ -118,3 +118,4 @@ jobs:
               requests.post(f'https://api.telegram.org/bot{bot_token}/sendMessage', 
                           json={'chat_id': chat_id, 'text': message})
           "
+          
