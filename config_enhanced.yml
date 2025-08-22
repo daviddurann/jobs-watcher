@@ -17,7 +17,7 @@ targets:
   - company: "Lufthansa Group"
     region: "Europe"
     source: "html"
-    url: "https://careers.lufthansagroup.com/go/Pilot-Jobs/2519010/"
+    url: "https://apply.lufthansagroup.careers/index.php?ac=search_result&search_criterion_channel%5B%5D=12&search_criterion_activity_level%5B%5D=107"
     selectors:
       item: ".job-listing, .position, .career-item"
       title: ".job-title, h3, .title"
@@ -27,7 +27,7 @@ targets:
   - company: "British Airways"
     region: "Europe"
     source: "html"
-    url: "https://careers.ba.com/pilots-jobs"
+    url: "https://careers.ba.com/search-jobs"
     selectors:
       item: ".job-result, .position, .job-listing"
       title: ".job-title, h3, .title"
@@ -37,7 +37,7 @@ targets:
   - company: "Air France"
     region: "Europe"
     source: "html"
-    url: "https://www.airfranceklm.com/en/careers"
+    url: "https://recrutement.airfrance.com/homepage.aspx?LCID=2057"
     selectors:
       item: ".job-card, .career-item, .position"
       title: ".job-title, h3, .title"
@@ -47,7 +47,7 @@ targets:
   - company: "KLM Royal Dutch Airlines"
     region: "Europe"
     source: "html"
-    url: "https://www.klm.com/careers/pilots"
+    url: "https://careers.klm.com/en/jobs/"
     selectors:
       item: ".job-item, .career-item, .position"
       title: ".job-title, h3, .title"
@@ -57,7 +57,7 @@ targets:
   - company: "Ryanair"
     region: "Europe"
     source: "html"
-    url: "https://careers.ryanair.com/pilots/"
+    url: "https://careers.ryanair.com/pilots/jobs/"
     selectors:
       item: ".job-card, .position, .career-item"
       title: ".job-title, h3, .title"
@@ -88,7 +88,7 @@ targets:
   - company: "Swiss International Air Lines"
     region: "Europe"
     source: "html"
-    url: "https://www.swiss.com/ch/en/career/pilots"
+    url: "https://www.swiss.com/corporate/en/careers/professional-fields/pilots.html"
     selectors:
       item: ".job-listing, .career-item"
       title: ".job-title, h3, .title"
@@ -180,7 +180,7 @@ targets:
   - company: "Iberia"
     region: "Europe"
     source: "html"
-    url: "https://group.iberia.es/en/careers/job-vacancies/"
+    url: "https://trabajaconnosotros.iberia.es/go/Pilotos/9055202/"
     selectors:
       item: ".job-card, .career-item, .position"
       title: ".job-title, h3, .title"
@@ -306,7 +306,7 @@ targets:
   - company: "Etihad Airways"
     region: "Middle East"
     source: "html"
-    url: "https://careers.etihad.com/go/Pilot-Jobs/716001/"
+    url: "https://jobs.etihad.com/careers"
     selectors:
       item: ".job-listing, .position"
       title: ".job-title, h3"
