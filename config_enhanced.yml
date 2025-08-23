@@ -266,6 +266,74 @@ targets:
       location: "text, .location, .city"
       url: "h3 a::attr(href), a[href*='emploi-']::attr(href)"
 
+  # === AEROLÍNEAS ADICIONALES CON OFERTAS ACTIVAS ===
+
+  - company: "Iberia Pilotos"
+    region: "Europe"
+    source: "dynamic"
+    url: "https://trabajaconnosotros.iberia.es/go/Pilotos/9055202/"
+    wait_for: "a[href*='job/'], .job-title, [data-job]"
+    selectors:
+      item: "a[href*='job/'], .job-item, .position, li"
+      title: "text, .job-title, .title"
+      location: "text, .location, España"
+      url: "a::attr(href)"
+
+  - company: "Lufthansa Group"
+    region: "Europe"
+    source: "dynamic"
+    url: "https://apply.lufthansagroup.careers/index.php?ac=search_result&search_criterion_channel%5B%5D=12&search_criterion_activity_level%5B%5D=107"
+    wait_for: ".job-item, .position, [data-job], a[href*='job']"
+    selectors:
+      item: ".job-item, .position, [data-job], a[href*='job'], tr, li"
+      title: "text, .job-title, .title, .position-title"
+      location: "text, .location, .city"
+      url: "a::attr(href)"
+
+  - company: "Air Baltic"
+    region: "Europe"
+    source: "dynamic"
+    url: "https://careers.airbaltic.com/en/vacancies"
+    wait_for: ".vacancy, .job-item, a[href*='captain'], a[href*='first-officer']"
+    selectors:
+      item: ".vacancy, .job-item, .position, a[href*='captain'], a[href*='first-officer'], a[href*='pilot']"
+      title: "text, .job-title, .title, .vacancy-title"
+      location: "text, .location, .city"
+      url: "a::attr(href)"
+
+  - company: "Bulgaria Air"
+    region: "Europe"
+    source: "dynamic"
+    url: "https://www.air.bg/en/about/careers"
+    wait_for: ".career-item, .job-item, .position, h3, h2"
+    selectors:
+      item: ".career-item, .job-item, .position, h3, h2, .job-listing"
+      title: "text, .job-title, .title, .position-title"
+      location: "text, .location, .city, Bulgaria"
+      url: "a::attr(href)"
+
+  - company: "SAS Scandinavian Airlines"
+    region: "Europe"
+    source: "dynamic"
+    url: "https://careers.sasgroup.net/go/All-SAS-Jobs/4164001/"
+    wait_for: ".job-item, .position, a[href*='job'], [data-job]"
+    selectors:
+      item: ".job-item, .position, a[href*='job'], [data-job], .job-card"
+      title: "text, .job-title, .title, .position-title"
+      location: "text, .location, .city"
+      url: "a::attr(href)"
+
+  - company: "Norwegian Air"
+    region: "Europe"
+    source: "dynamic"
+    url: "https://careers.norwegian.com/go/Pilots/777702/"
+    wait_for: ".job-item, .position, a[href*='job'], [data-job]"
+    selectors:
+      item: ".job-item, .position, a[href*='job'], [data-job], .job-card"
+      title: "text, .job-title, .title, .position-title"
+      location: "text, .location, .city"
+      url: "a::attr(href)"
+
   # === US MAJOR AIRLINES ===
 
   - company: "Delta Air Lines"
