@@ -5,6 +5,7 @@
 telegram:
   bot_token: ""        # Set via TELEGRAM_BOT_TOKEN environment variable
   chat_id: ""          # Set via TELEGRAM_CHAT_ID environment variable
+  group_id: ""         # Set via TELEGRAM_GROUP_ID environment variable
 
 # Configuración de filtrado
 filtering:
@@ -17,31 +18,31 @@ targets:
   - company: "Lufthansa Group"
     region: "Europe"
     source: "html"
-    url: "https://apply.lufthansagroup.careers/index.php?ac=search_result&search_criterion_channel%5B%5D=12&search_criterion_activity_level%5B%5D=107"
+    url: "https://lufthansagroup.careers/"
     selectors:
-      item: ".job-listing, .position, .career-item"
-      title: ".job-title, h3, .title"
-      location: ".job-location, .location"
+      item: ".job-listing, .position, .career-item, .job-item, .job-card"
+      title: ".job-title, h3, .title, .position-title, .card-title"
+      location: ".job-location, .location, .city, .card-subtitle"
       url: "a::attr(href)"
 
   - company: "British Airways"
     region: "Europe"
     source: "html"
-    url: "https://careers.ba.com/search-jobs"
+    url: "https://careers.ba.com/en/search-jobs"
     selectors:
-      item: ".job-result, .position, .job-listing"
-      title: ".job-title, h3, .title"
-      location: ".job-location, .location"
+      item: ".job-result, .position, .job-listing, .card, .job-item, .search-result"
+      title: ".job-title, h3, .title, .card-title, .result-title"
+      location: ".job-location, .location, .card-subtitle, .result-location"
       url: "a::attr(href)"
 
   - company: "Air France"
     region: "Europe"
     source: "html"
-    url: "https://recrutement.airfrance.com/homepage.aspx?LCID=2057"
+    url: "https://corporate.airfrance.com/en/airline-pilot"
     selectors:
-      item: ".job-card, .career-item, .position"
-      title: ".job-title, h3, .title"
-      location: ".location"
+      item: ".job-card, .career-item, .position, .job-offer"
+      title: ".job-title, h3, .title, .offer-title"
+      location: ".location, .job-location"
       url: "a::attr(href)"
 
   - company: "KLM Royal Dutch Airlines"
@@ -57,11 +58,11 @@ targets:
   - company: "Ryanair"
     region: "Europe"
     source: "html"
-    url: "https://careers.ryanair.com/pilots/jobs/"
+    url: "https://careers.ryanair.com/"
     selectors:
-      item: ".job-card, .position, .career-item"
-      title: ".job-title, h3, .title"
-      location: ".location"
+      item: ".job-card, .position, .career-item, .job-listing, .vacancy"
+      title: ".job-title, h3, .title, .card-title, .vacancy-title"
+      location: ".location, .job-location, .card-subtitle"
       url: "a::attr(href)"
 
   - company: "easyJet"

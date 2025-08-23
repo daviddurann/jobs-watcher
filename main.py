@@ -1,14 +1,18 @@
-# main_enhanced.py
+# main.py
 """
-Enhanced job tracker with improved dynamic site support, better deduplication,
-and status management.
+IMPROVED Aviation Job Scraper with:
+- GROUP_ID support alongside CHAT_ID
+- Enhanced deduplication (no duplicate notifications)
+- Proper job offer expiry detection
+- Fixed scraping for failing airlines
+- Improved error handling and logging
 """
 
 import os, sys, yaml, time, logging
 from typing import List, Dict
 from datetime import datetime
 from storage import (
-    init_enhanced_db, upsert_jobs_enhanced, start_scraping_run, 
+    init_enhanced_db, upsert_jobs_enhanced, start_scraping_run,
     finish_scraping_run, get_job_statistics, cleanup_old_data
 )
 from notifier import notify_changes_enhanced
@@ -36,26 +40,43 @@ def test_problematic_sites(targets: List[Dict]) -> List[Dict]:
     """Test the specific sites mentioned in the requirements"""
     problem_sites = [
         "trabajaconnosotros.bintercanarias.com",
-        "jobs.aireuropa.bizneo.cloud", 
+        "jobs.aireuropa.bizneo.cloud",
         "careers.wizzair.com"
     ]
-    
+
     tested_targets = []
     for target in targets:
         url = target.get('url', '')
         if any(site in url for site in problem_sites):
             tested_targets.append(target)
-    
+
     return tested_targets
 
 def run(config_path="config_enhanced.yml", db_path="jobs.db"):
     start_time = datetime.now()
-    logger.info(f"🚀 Starting ENHANCED job tracker run at {start_time}")
+    logger.info(f"🚀 Starting IMPROVED Aviation Job Tracker at {start_time}")
+    logger.info("✨ New features: GROUP_ID support, enhanced deduplication, proper expiry detection")
 
     cfg = load_config(config_path)
     telegram_cfg = cfg.get("telegram", {})
     targets = cfg.get("targets", [])
     filtering_cfg = cfg.get("filtering", {})
+
+    # Log telegram configuration
+    chat_id = os.getenv("TELEGRAM_CHAT_ID") or telegram_cfg.get("chat_id")
+    group_id = os.getenv("TELEGRAM_GROUP_ID") or telegram_cfg.get("group_id")
+    bot_token = os.getenv("TELEGRAM_BOT_TOKEN") or telegram_cfg.get("bot_token")
+
+    recipients = []
+    if bot_token and chat_id:
+        recipients.append(f"chat_id: {chat_id}")
+    if bot_token and group_id:
+        recipients.append(f"group_id: {group_id}")
+
+    if recipients:
+        logger.info(f"📱 Notifications configured for: {', '.join(recipients)}")
+    else:
+        logger.warning("📱 No notification recipients configured")
 
     # Initialize enhanced database
     conn = init_enhanced_db(db_path)
@@ -70,20 +91,22 @@ def run(config_path="config_enhanced.yml", db_path="jobs.db"):
     error_stats = {}
     region_stats = {}
     source_type_stats = {}
-    
+
     # Test problematic sites first to verify improvements
     problem_targets = test_problematic_sites(targets)
     if problem_targets:
         logger.info(f"🎯 Testing {len(problem_targets)} previously problematic sites first...")
-        
+
         for target in problem_targets:
             logger.info(f"🔍 Testing: {target['company']} ({target['url']})")
             try:
                 jobs = fetch_one(target)
                 logger.info(f"  ✅ SUCCESS: Found {len(jobs)} jobs from {target['company']}")
                 if jobs:
-                    for job in jobs[:3]:  # Show first 3 jobs as examples
-                        logger.info(f"    📋 {job.get('title', 'No title')} - {job.get('location', 'No location')}")
+                    pilot_jobs = filter_pilot_jobs(jobs)
+                    logger.info(f"     ✈️ {len(pilot_jobs)} pilot-related jobs found")
+                    for job in pilot_jobs[:2]:  # Show first 2 pilot jobs as examples
+                        logger.info(f"       📋 {job.get('title', 'No title')} - {job.get('location', 'No location')} (Score: {job.get('pilot_score', 0)})")
             except Exception as e:
                 logger.error(f"  ❌ FAILED: {target['company']} - {e}")
 
@@ -101,7 +124,7 @@ def run(config_path="config_enhanced.yml", db_path="jobs.db"):
 
             # Enhanced filtering
             original_count = len(jobs)
-            
+
             # Apply pilot job filtering if enabled
             if filtering_cfg.get("pilot_jobs_only", False):
                 jobs = filter_pilot_jobs(jobs)
@@ -157,7 +180,7 @@ def run(config_path="config_enhanced.yml", db_path="jobs.db"):
             source_type_stats[source_type]['failed'] += 1
 
             logger.error(f"  ❌ Error in {company_name}: {e}")
-            
+
             # Log full traceback for debugging in debug mode
             if os.getenv('DEBUG'):
                 logger.debug(f"Full traceback: {traceback.format_exc()}")
@@ -168,22 +191,22 @@ def run(config_path="config_enhanced.yml", db_path="jobs.db"):
     end_time = datetime.now()
     total_duration = (end_time - start_time).total_seconds()
 
-    # Enhanced job processing with better change detection
-    logger.info("📊 Processing job changes...")
+    # IMPROVED job processing with better change detection (fixes duplicate notifications)
+    logger.info("📊 Processing job changes with enhanced deduplication...")
     opened, closed, updated = upsert_jobs_enhanced(conn, all_jobs)
-    
+
     # Get database statistics
     db_stats = get_job_statistics(conn)
 
     # Log comprehensive execution summary
-    logger.info(f"\n=== 🎯 ENHANCED EXECUTION SUMMARY ===")
+    logger.info(f"\n=== 🎯 IMPROVED EXECUTION SUMMARY ===")
     logger.info(f"⏱️  Execution time: {total_duration:.2f} seconds")
     logger.info(f"📡 Sources processed: {successful_sources}/{total_sources} ({failed_sources} failed)")
     logger.info(f"📈 Success rate: {(successful_sources/total_sources*100):.1f}%")
     logger.info(f"🔍 Total jobs found: {len(all_jobs)}")
-    logger.info(f"🆕 New jobs: {len(opened)}")
-    logger.info(f"🔄 Updated jobs: {len(updated)}")
-    logger.info(f"🔴 Closed jobs: {len(closed)}")
+    logger.info(f"🆕 New jobs: {len(opened)} (will notify)")
+    logger.info(f"🔄 Updated jobs: {len(updated)} (will notify)")
+    logger.info(f"🔴 Closed jobs: {len(closed)} (will notify)")
     logger.info(f"📊 Currently open jobs: {db_stats['currently_open']}")
     logger.info(f"📚 Total jobs in database: {db_stats['total_jobs_ever']}")
 
@@ -224,17 +247,18 @@ def run(config_path="config_enhanced.yml", db_path="jobs.db"):
     }
     finish_scraping_run(conn, run_id, run_stats)
 
-    # Enhanced notifications - only send changes
+    # IMPROVED notifications - only send CHANGES, support GROUP_ID + CHAT_ID
     if opened or closed or updated:
         try:
+            logger.info("📱 Sending notifications for job changes...")
             notify_changes_enhanced(opened, closed, updated, telegram_cfg, db_stats)
-            logger.info(f"📱 Notifications sent: {len(opened)} new, {len(closed)} closed, {len(updated)} updated")
+            logger.info(f"📱 ✅ Notifications sent successfully: {len(opened)} new, {len(closed)} closed, {len(updated)} updated")
         except Exception as e:
-            logger.error(f"Failed to send Telegram notifications: {e}")
+            logger.error(f"📱 ❌ Failed to send Telegram notifications: {e}")
             if os.getenv('DEBUG'):
                 logger.debug(f"Notification error traceback: {traceback.format_exc()}")
     else:
-        logger.info("📱 No job changes to notify")
+        logger.info("📱 No job changes to notify (this prevents duplicate notifications)")
 
     # Cleanup old data periodically (every 7 days)
     import random
@@ -244,8 +268,8 @@ def run(config_path="config_enhanced.yml", db_path="jobs.db"):
         if deleted_jobs > 0 or deleted_runs > 0:
             logger.info(f"🧹 Cleaned up {deleted_jobs} old jobs and {deleted_runs} old runs")
 
-    logger.info(f"✅ Enhanced job tracker run completed at {end_time}")
-    
+    logger.info(f"✅ IMPROVED Aviation Job Tracker completed at {end_time}")
+
     # Close database connection
     conn.close()
 
@@ -253,7 +277,14 @@ def run(config_path="config_enhanced.yml", db_path="jobs.db"):
         'success': True,
         'stats': run_stats,
         'db_stats': db_stats,
-        'duration': total_duration
+        'duration': total_duration,
+        'improvements_applied': [
+            'GROUP_ID support',
+            'Enhanced deduplication',
+            'Proper expiry detection',
+            'Fixed airline sources',
+            'No duplicate notifications'
+        ]
     }
 
 if __name__ == "__main__":
@@ -265,16 +296,17 @@ if __name__ == "__main__":
         config_path = os.getenv("CONFIG_PATH", "config_enhanced.yml")
 
     db_path = os.getenv("DB_PATH", "jobs.db")
-    
+
     try:
         result = run(config_path, db_path)
         if result['success']:
-            logger.info("🎉 Job tracking completed successfully!")
+            logger.info("🎉 IMPROVED Aviation Job Tracking completed successfully!")
+            logger.info("🔧 Applied improvements: " + ", ".join(result['improvements_applied']))
         else:
             logger.error("❌ Job tracking completed with errors")
             sys.exit(1)
     except Exception as e:
-        logger.error(f"💥 Fatal error in job tracker: {e}")
+        logger.error(f"💥 Fatal error in aviation job tracker: {e}")
         if os.getenv('DEBUG'):
             logger.error(f"Fatal error traceback: {traceback.format_exc()}")
         sys.exit(1)

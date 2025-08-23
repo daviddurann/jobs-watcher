@@ -3,7 +3,7 @@ name: Pilot Job Tracker - Enhanced
 on:
   schedule:
     # Run at 00:00, 10:00 and 20:00 UTC every day
-    - cron: '0 0,10,20 * * *'
+    - cron: '0 0,11,20 * * *'
 
   # Allow manual triggering for testing
   workflow_dispatch:
