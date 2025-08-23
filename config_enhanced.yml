@@ -220,6 +220,52 @@ targets:
       location: ".job-location, .location, .city"
       url: "a::attr(href)"
 
+  # === NUEVAS AEROLÍNEAS AÑADIDAS ===
+
+  - company: "Smartwings"
+    region: "Europe"
+    source: "dynamic"
+    url: "https://www.smartwings.com/es/empleo/"
+    wait_for: "h3, h2, strong, .job-title, .position"
+    selectors:
+      item: "h3, h2, strong, .job-title, .position, [data-job]"
+      title: "text, .title, .job-title"
+      location: "text, .location, .city"
+      url: "a::attr(href)"
+
+  - company: "LEVEL (IAG)"
+    region: "Europe"
+    source: "dynamic"
+    url: "https://careers.flylevel.com/jobs"
+    wait_for: "a[href*='jobs/'], .job-listing, .job-item"
+    selectors:
+      item: "a[href*='jobs/'], .job-listing, .job-item, [data-job], li"
+      title: "text, .job-title, h3, strong"
+      location: "text, .location, .city"
+      url: "a::attr(href)"
+
+  - company: "PLAY"
+    region: "Europe"
+    source: "dynamic"
+    url: "https://jobs.50skills.com/flyplay/en"
+    wait_for: "a[href*='flyplay/en/'], strong, .job-title"
+    selectors:
+      item: "a[href*='flyplay/en/'], .job-item, .opening, .job-listing"
+      title: "strong, b, .job-title, h3, text"
+      location: "text, .location, .city"
+      url: "a::attr(href)"
+
+  - company: "Air France"
+    region: "Europe"
+    source: "dynamic"
+    url: "https://recrutement.airfrance.com/job/list-of-jobs.aspx"
+    wait_for: "h3 a, .job-title, [href*='emploi-']"
+    selectors:
+      item: "li:has(h3 a), .job-item, .offer-item, li"
+      title: "h3 a, .job-title, a[href*='emploi-'], text"
+      location: "text, .location, .city"
+      url: "h3 a::attr(href), a[href*='emploi-']::attr(href)"
+
   # === US MAJOR AIRLINES ===
 
   - company: "Delta Air Lines"
