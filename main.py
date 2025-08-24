@@ -202,7 +202,10 @@ def run(config_path="config_enhanced.yml", db_path="jobs.db"):
     logger.info(f"\n=== 🎯 IMPROVED EXECUTION SUMMARY ===")
     logger.info(f"⏱️  Execution time: {total_duration:.2f} seconds")
     logger.info(f"📡 Sources processed: {successful_sources}/{total_sources} ({failed_sources} failed)")
-    logger.info(f"📈 Success rate: {(successful_sources/total_sources*100):.1f}%")
+    if total_sources > 0:
+        logger.info(f"📈 Success rate: {(successful_sources/total_sources*100):.1f}%")
+    else:
+        logger.info(f"📈 Success rate: N/A (no sources configured)")
     logger.info(f"🔍 Total jobs found: {len(all_jobs)}")
     logger.info(f"🆕 New jobs: {len(opened)} (will notify)")
     logger.info(f"🔄 Updated jobs: {len(updated)} (will notify)")
@@ -224,16 +227,18 @@ def run(config_path="config_enhanced.yml", db_path="jobs.db"):
         logger.info(f"\n=== 🌍 REGIONAL BREAKDOWN ===")
         for region, stats in sorted(region_stats.items()):
             total_sources_region = stats['successful'] + stats['failed']
-            success_rate = (stats['successful']/total_sources_region*100) if total_sources_region > 0 else 0
-            logger.info(f"{region}: {stats['successful']}/{total_sources_region} sources ({success_rate:.1f}%), {stats['filtered_jobs']} filtered jobs")
+            if total_sources_region > 0:
+                success_rate = (stats['successful']/total_sources_region*100)
+                logger.info(f"{region}: {stats['successful']}/{total_sources_region} sources ({success_rate:.1f}%), {stats['filtered_jobs']} filtered jobs")
 
     # Log source type statistics
     if source_type_stats:
         logger.info(f"\n=== 🔧 SOURCE TYPE BREAKDOWN ===")
         for source_type, stats in sorted(source_type_stats.items(), key=lambda x: x[1]['jobs'], reverse=True):
             total_sources_type = stats['successful'] + stats['failed']
-            success_rate = (stats['successful']/total_sources_type*100) if total_sources_type > 0 else 0
-            logger.info(f"{source_type}: {stats['successful']}/{total_sources_type} sources ({success_rate:.1f}%), {stats['jobs']} jobs")
+            if total_sources_type > 0:
+                success_rate = (stats['successful']/total_sources_type*100)
+                logger.info(f"{source_type}: {stats['successful']}/{total_sources_type} sources ({success_rate:.1f}%), {stats['jobs']} jobs")
 
     # Finish scraping run tracking
     run_stats = {
@@ -247,18 +252,15 @@ def run(config_path="config_enhanced.yml", db_path="jobs.db"):
     }
     finish_scraping_run(conn, run_id, run_stats)
 
-    # IMPROVED notifications - only send CHANGES, support GROUP_ID + CHAT_ID
-    if opened or closed or updated:
-        try:
-            logger.info("📱 Sending notifications for job changes...")
-            notify_changes_enhanced(opened, closed, updated, telegram_cfg, db_stats)
-            logger.info(f"📱 ✅ Notifications sent successfully: {len(opened)} new, {len(closed)} closed, {len(updated)} updated")
-        except Exception as e:
-            logger.error(f"📱 ❌ Failed to send Telegram notifications: {e}")
-            if os.getenv('DEBUG'):
-                logger.debug(f"Notification error traceback: {traceback.format_exc()}")
-    else:
-        logger.info("📱 No job changes to notify (this prevents duplicate notifications)")
+    # IMPROVED notifications - ALWAYS send summary, support both GROUP_ID + CHAT_ID
+    try:
+        logger.info("📱 Sending notifications (summary always sent, individual messages for changes)...")
+        notify_changes_enhanced(opened, closed, updated, telegram_cfg, db_stats)
+        logger.info(f"📱 ✅ Notifications sent successfully: summary + {len(opened)} new + {len(closed)} closed + {len(updated)} updated")
+    except Exception as e:
+        logger.error(f"📱 ❌ Failed to send Telegram notifications: {e}")
+        if os.getenv('DEBUG'):
+            logger.debug(f"Notification error traceback: {traceback.format_exc()}")
 
     # Cleanup old data periodically (every 7 days)
     import random

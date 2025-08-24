@@ -25,7 +25,7 @@ on:
 jobs:
   track_jobs:
     runs-on: ubuntu-latest
-    timeout-minutes: 25  # Prevent hanging workflows
+    timeout-minutes: 35  # Prevent hanging workflows
 
     steps:
       - name: Checkout code
@@ -47,6 +47,7 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_GROUP_ID: ${{ secrets.TELEGRAM_GROUP_ID }}   # <-- Añadido
           CONFIG_PATH: ${{ inputs.config_file || 'config_enhanced.yml' }}
           DEBUG: ${{ inputs.debug_mode && '1' || '0' }}
         run: |
@@ -108,14 +109,21 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_GROUP_ID: ${{ secrets.TELEGRAM_GROUP_ID }}   # <-- Añadido
         run: |
           python -c "
           import os, requests
           bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
           chat_id = os.getenv('TELEGRAM_CHAT_ID')
-          if bot_token and chat_id:
-              message = f'🚨 Pilot Job Tracker FAILED\\nRun: ${{ github.run_number }}\\nTime: $(date)\\nCheck logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
-              requests.post(f'https://api.telegram.org/bot{bot_token}/sendMessage', 
-                          json={'chat_id': chat_id, 'text': message})
+          group_id = os.getenv('TELEGRAM_GROUP_ID')
+
+          message = f'🚨 Pilot Job Tracker FAILED\\nRun: ${{ github.run_number }}\\nTime: $(date)\\nCheck logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+
+          if bot_token:
+              if chat_id:
+                  requests.post(f'https://api.telegram.org/bot{bot_token}/sendMessage', 
+                                json={'chat_id': chat_id, 'text': message})
+              if group_id:
+                  requests.post(f'https://api.telegram.org/bot{bot_token}/sendMessage', 
+                                json={'chat_id': group_id, 'text': message})
           "
-          

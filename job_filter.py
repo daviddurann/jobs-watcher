@@ -16,6 +16,8 @@ PILOT_KEYWORDS = [
     'Piloto',
     '737',
     'a320',
+    'pilote',
+    'NTR',
     'airline pilot',
     'commercial pilot',
     'airline transport pilot',
@@ -65,7 +67,7 @@ def add_pilot_score(job: Dict) -> Dict:
     text_to_search = f"{title} {description} {department}"
 
     # High priority keywords (worth more points)
-    high_priority = ['pilot', 'captain', 'first officer', 'copilot', 'co-pilot', 'piloto', 'copiloto', '737', 'a320']
+    high_priority = ['pilot', 'pilote', 'captain', 'first officer', 'copilot', 'co-pilot', 'piloto', 'copiloto', '737', 'a320']
     for keyword in high_priority:
         if keyword in text_to_search:
             score += 3

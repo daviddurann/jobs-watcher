@@ -105,27 +105,22 @@ def group_jobs_by_company(jobs: List[Dict]) -> Dict[str, List[Dict]]:
     return grouped
 
 def create_summary_message(opened: List[Dict], closed: List[Dict], updated: List[Dict], db_stats: Dict) -> str:
-    """Create a summary message for bulk notifications"""
+    """Create a summary message for bulk notifications - ALWAYS send, even if no changes"""
 
-    if not (opened or closed or updated):
-        return None
-
-    total_changes = len(opened) + len(closed) + len(updated)
-
+    # ALWAYS create summary message, even if no changes
     summary = f"📊 *Resumen de Cambios en Empleos Piloto*\n\n"
 
-    if opened:
-        summary += f"🟢 Nuevos empleos: {len(opened)}\n"
-    if updated:
-        summary += f"📝 Empleos actualizados: {len(updated)}\n"
+    # Always show these lines, even if 0
+    summary += f"🟢 Nuevos empleos: {len(opened)}\n"
+    summary += f"📈 Total empleos abiertos: {db_stats.get('currently_open', 0)}\n"
+    summary += f"📚 Total empleos en base de datos: {db_stats.get('total_jobs_ever', 0)}\n"
+
+    # Only show closed if there are any
     if closed:
         summary += f"🔴 Empleos cerrados: {len(closed)}\n"
 
-    summary += f"\n📈 Total empleos abiertos: {db_stats.get('currently_open', 0)}"
-    summary += f"\n📚 Total empleos en base de datos: {db_stats.get('total_jobs_ever', 0)}"
-
-    # Add top companies with changes
-    all_jobs = opened + updated + closed
+    # Add top companies with changes (only if there are changes)
+    all_jobs = opened + closed + updated
     if all_jobs:
         companies = {}
         for job in all_jobs:
@@ -134,7 +129,7 @@ def create_summary_message(opened: List[Dict], closed: List[Dict], updated: List
 
         top_companies = sorted(companies.items(), key=lambda x: x[1], reverse=True)[:5]
         if top_companies:
-            summary += f"\n\n🏢 *Empresas con más cambios:*\n"
+            summary += f"\n🏢 *Empresas con más cambios:*\n"
             for company, count in top_companies:
                 summary += f"• {company}: {count}\n"
 
@@ -144,7 +139,7 @@ def create_summary_message(opened: List[Dict], closed: List[Dict], updated: List
 
 def notify_changes_enhanced(opened: List[Dict], closed: List[Dict], updated: List[Dict],
                             telegram_cfg: Dict, db_stats: Dict):
-    """Enhanced notification system with smarter grouping and rate limiting"""
+    """Enhanced notification system - ALWAYS send summary, individual job messages"""
 
     bot_token = _env_or(telegram_cfg, "bot_token")
     chat_id = _env_or(telegram_cfg, "chat_id")
@@ -161,91 +156,54 @@ def notify_changes_enhanced(opened: List[Dict], closed: List[Dict], updated: Lis
         logger.warning("Telegram credentials not configured, skipping notifications")
         return
 
-    # Rate limiting: don't send too many individual messages
-    max_individual_messages = 10
-    total_jobs = len(opened) + len(closed) + len(updated)
-
-    if total_jobs == 0:
-        logger.info("No job changes to notify")
-        return
-
     # Send notifications to all configured recipients
     for recipient_type, recipient_id in recipients:
         try:
             logger.info(f"📱 Sending notifications to {recipient_type}: {recipient_id}")
 
-            # Always send a summary first
+            # ALWAYS send summary first - even if no changes
             summary = create_summary_message(opened, closed, updated, db_stats)
             if summary:
                 send_telegram_message(summary, bot_token, recipient_id)
                 time.sleep(1)  # Rate limiting
 
-            # If there are few changes, send individual messages
-            if total_jobs <= max_individual_messages:
+            # Send individual messages for each job (NO GROUPING OR COLLAPSING)
+            total_messages = 0
 
-                # Send new jobs (highest priority)
-                for job in opened:
-                    try:
-                        pilot_score = job.get('pilot_score', 0)
-                        status = 'reopened' if job.get('reopen_count', 0) > 0 else 'opened'
-                        message = format_job_message(job, status, pilot_score)
-                        send_telegram_message(message, bot_token, recipient_id)
-                        time.sleep(0.5)  # Rate limiting
-                    except Exception as e:
-                        logger.error(f"Failed to send notification for opened job: {e}")
+            # Send new jobs (highest priority) - individual messages
+            for job in opened:
+                try:
+                    pilot_score = job.get('pilot_score', 0)
+                    status = 'reopened' if job.get('reopen_count', 0) > 0 else 'opened'
+                    message = format_job_message(job, status, pilot_score)
+                    send_telegram_message(message, bot_token, recipient_id)
+                    total_messages += 1
+                    time.sleep(0.5)  # Rate limiting
+                except Exception as e:
+                    logger.error(f"Failed to send notification for opened job: {e}")
 
-                # Send updated jobs (medium priority)
-                for job in updated:
-                    try:
-                        pilot_score = job.get('pilot_score', 0)
-                        message = format_job_message(job, 'updated', pilot_score)
-                        send_telegram_message(message, bot_token, recipient_id)
-                        time.sleep(0.5)
-                    except Exception as e:
-                        logger.error(f"Failed to send notification for updated job: {e}")
+            # Send updated jobs (medium priority) - individual messages
+            for job in updated:
+                try:
+                    pilot_score = job.get('pilot_score', 0)
+                    message = format_job_message(job, 'updated', pilot_score)
+                    send_telegram_message(message, bot_token, recipient_id)
+                    total_messages += 1
+                    time.sleep(0.5)
+                except Exception as e:
+                    logger.error(f"Failed to send notification for updated job: {e}")
 
-                # Send closed jobs (lower priority)
-                for job in closed:
-                    try:
-                        message = format_job_message(job, 'closed')
-                        send_telegram_message(message, bot_token, recipient_id)
-                        time.sleep(0.5)
-                    except Exception as e:
-                        logger.error(f"Failed to send notification for closed job: {e}")
+            # Send closed jobs (lower priority) - individual messages
+            for job in closed:
+                try:
+                    message = format_job_message(job, 'closed')
+                    send_telegram_message(message, bot_token, recipient_id)
+                    total_messages += 1
+                    time.sleep(0.5)
+                except Exception as e:
+                    logger.error(f"Failed to send notification for closed job: {e}")
 
-            else:
-                # Too many changes - send grouped notifications
-                logger.info(f"Too many changes ({total_jobs}), sending grouped notifications to {recipient_type}")
-
-                # Group and send only new jobs (most important)
-                if opened:
-                    grouped_opened = group_jobs_by_company(opened)
-                    for company, jobs in grouped_opened.items():
-                        try:
-                            if len(jobs) == 1:
-                                job = jobs[0]
-                                pilot_score = job.get('pilot_score', 0)
-                                message = format_job_message(job, 'opened', pilot_score)
-                            else:
-                                # Multiple jobs from same company
-                                message = f"🟢 *{len(jobs)} NUEVOS EMPLEOS* — {company}\n"
-                                for i, job in enumerate(jobs[:5], 1):  # Show first 5
-                                    title = job.get('title', 'Sin título')[:80]
-                                    location = job.get('location', 'N/D')[:30]
-                                    message += f"{i}. {title} - {location}\n"
-                                if len(jobs) > 5:
-                                    message += f"... y {len(jobs) - 5} más\n"
-
-                                if jobs[0].get('url'):
-                                    message += f"🔗 Ver todos en la empresa"
-
-                            send_telegram_message(message, bot_token, recipient_id)
-                            time.sleep(1)
-
-                        except Exception as e:
-                            logger.error(f"Failed to send grouped notification for {company}: {e}")
-
-            logger.info(f"Successfully sent notifications to {recipient_type} for {total_jobs} job changes")
+            logger.info(f"Successfully sent {total_messages + 1} notifications to {recipient_type} (1 summary + {total_messages} individual jobs)")
 
         except Exception as e:
             logger.error(f"Failed to send notifications to {recipient_type} {recipient_id}: {e}")

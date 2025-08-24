@@ -35,17 +35,108 @@ targets:
       location: ".job-location, .location, .card-subtitle, .result-location"
       url: "a::attr(href)"
 
+  # === FIXED SOURCES - Updated URLs and selectors per requirements ===
+
   - company: "Air France"
     region: "Europe"
-    source: "html"
-    url: "https://corporate.airfrance.com/en/airline-pilot"
+    source: "dynamic"
+    url: "https://recrutement.airfrance.com/homepage.aspx?LCID=2057"
+    wait_for: ".job-item, .job-card, .offer-item, a[href*='emploi']"
     selectors:
-      item: ".job-card, .career-item, .position, .job-offer"
-      title: ".job-title, h3, .title, .offer-title"
-      location: ".location, .job-location"
+      item: ".job-item, .job-card, .offer-item, .position, li:has(a[href*='emploi'])"
+      title: ".job-title, h3, .title, a[href*='emploi']"
+      location: ".location, .city, .job-location"
+      url: "a::attr(href)"
+
+  - company: "PLAY Airlines"
+    region: "Europe"
+    source: "dynamic"
+    url: "https://jobs.50skills.com/flyplay/en"
+    wait_for: "a[href*='flyplay/en/'], .job-item, .opening"
+    selectors:
+      item: "a[href*='flyplay/en/'], .job-item, .opening, .position, .job-listing"
+      title: "text, .job-title, strong, b, h3"
+      location: ".location, .city, text"
+      url: "a::attr(href)"
+
+  - company: "Smartwings"
+    region: "Europe"
+    source: "dynamic"
+    url: "https://www.smartwings.com/es/empleo/"
+    wait_for: "h2, h3, strong, .job-title, .position"
+    selectors:
+      item: "h2, h3, strong, .job-title, .position, [data-job], .career-item"
+      title: "text, .title, .job-title"
+      location: "text, .location, .city"
+      url: "a::attr(href)"
+
+  - company: "airBaltic"
+    region: "Europe"
+    source: "dynamic"
+    url: "https://careers.airbaltic.com/en/vacancies"
+    wait_for: ".vacancy, .job-item, a[href*='captain'], a[href*='first-officer']"
+    selectors:
+      item: ".vacancy, .job-item, .position, a[href*='captain'], a[href*='first-officer'], a[href*='pilot']"
+      title: "text, .job-title, .title, .vacancy-title"
+      location: "text, .location, .city"
+      url: "a::attr(href)"
+
+  - company: "Air Bulgaria"
+    region: "Europe"
+    source: "dynamic"
+    url: "https://www.air.bg/en/about/careers"
+    wait_for: ".career-item, .job-item, .position, h3, h2"
+    selectors:
+      item: ".career-item, .job-item, .position, h3, h2, .job-listing"
+      title: "text, .job-title, .title, .position-title"
+      location: "text, .location, .city, Bulgaria"
       url: "a::attr(href)"
 
   - company: "KLM Royal Dutch Airlines"
+    region: "Europe"
+    source: "dynamic"
+    url: "https://careers.klm.com/en/jobs/?jobArea[]=cabin-and-cockpit"
+    wait_for: ".job-item, .career-item, .position, .job-card"
+    selectors:
+      item: ".job-item, .career-item, .position, .job-card"
+      title: ".job-title, h3, .title"
+      location: ".location, .city"
+      url: "a::attr(href)"
+
+  - company: "Aer Lingus"
+    region: "Europe"
+    source: "dynamic"
+    url: "https://aerlingus-career.talent-soft.com/accueil.aspx?LCID=2057"
+    wait_for: ".job-item, .job-card, .offer-item, .position"
+    selectors:
+      item: ".job-item, .job-card, .offer-item, .position, .career-item"
+      title: ".job-title, h3, .title, .offer-title"
+      location: ".location, .city, .job-location"
+      url: "a::attr(href)"
+
+  - company: "Ryanair"
+    region: "Europe"
+    source: "dynamic"
+    url: "https://careers.ryanair.com/jobs/"
+    wait_for: ".job-card, .position, .career-item, .job-listing, .vacancy"
+    selectors:
+      item: ".job-card, .position, .career-item, .job-listing, .vacancy"
+      title: ".job-title, h3, .title, .card-title, .vacancy-title"
+      location: ".location, .job-location, .card-subtitle"
+      url: "a::attr(href)"
+
+  - company: "Turkish Airlines"
+    region: "Europe"
+    source: "dynamic"
+    url: "https://careers.turkishairlines.com/en-US/vacant-positions"
+    wait_for: ".job-card, .position, .career-item, .job-item"
+    selectors:
+      item: ".job-card, .position, .career-item, .job-item"
+      title: ".job-title, h3, .title, .position-title"
+      location: ".location, .city"
+      url: "a::attr(href)"
+
+  - company: "KLM Royal Dutch Airlines - General"
     region: "Europe"
     source: "html"
     url: "https://careers.klm.com/en/jobs/"
@@ -55,7 +146,7 @@ targets:
       location: ".location"
       url: "a::attr(href)"
 
-  - company: "Ryanair"
+  - company: "Ryanair - General"
     region: "Europe"
     source: "html"
     url: "https://careers.ryanair.com/"
@@ -146,7 +237,7 @@ targets:
       location: ".location"
       url: "a::attr(href)"
 
-  - company: "Turkish Airlines"
+  - company: "Turkish Airlines - General"
     region: "Europe"
     source: "html"
     url: "https://careers.turkishairlines.com/en-US/cockpit-crew/"
@@ -244,27 +335,9 @@ targets:
       location: "text, .location, .city"
       url: "a::attr(href)"
 
-  - company: "PLAY"
-    region: "Europe"
-    source: "dynamic"
-    url: "https://jobs.50skills.com/flyplay/en"
-    wait_for: "a[href*='flyplay/en/'], strong, .job-title"
-    selectors:
-      item: "a[href*='flyplay/en/'], .job-item, .opening, .job-listing"
-      title: "strong, b, .job-title, h3, text"
-      location: "text, .location, .city"
-      url: "a::attr(href)"
 
-  - company: "Air France"
-    region: "Europe"
-    source: "dynamic"
-    url: "https://recrutement.airfrance.com/job/list-of-jobs.aspx"
-    wait_for: "h3 a, .job-title, [href*='emploi-']"
-    selectors:
-      item: "li:has(h3 a), .job-item, .offer-item, li"
-      title: "h3 a, .job-title, a[href*='emploi-'], text"
-      location: "text, .location, .city"
-      url: "h3 a::attr(href), a[href*='emploi-']::attr(href)"
+
+
 
   # === AEROLÍNEAS ADICIONALES CON OFERTAS ACTIVAS ===
 
@@ -290,27 +363,9 @@ targets:
       location: "text, .location, .city"
       url: "a::attr(href)"
 
-  - company: "Air Baltic"
-    region: "Europe"
-    source: "dynamic"
-    url: "https://careers.airbaltic.com/en/vacancies"
-    wait_for: ".vacancy, .job-item, a[href*='captain'], a[href*='first-officer']"
-    selectors:
-      item: ".vacancy, .job-item, .position, a[href*='captain'], a[href*='first-officer'], a[href*='pilot']"
-      title: "text, .job-title, .title, .vacancy-title"
-      location: "text, .location, .city"
-      url: "a::attr(href)"
 
-  - company: "Bulgaria Air"
-    region: "Europe"
-    source: "dynamic"
-    url: "https://www.air.bg/en/about/careers"
-    wait_for: ".career-item, .job-item, .position, h3, h2"
-    selectors:
-      item: ".career-item, .job-item, .position, h3, h2, .job-listing"
-      title: "text, .job-title, .title, .position-title"
-      location: "text, .location, .city, Bulgaria"
-      url: "a::attr(href)"
+
+
 
   - company: "SAS Scandinavian Airlines"
     region: "Europe"
@@ -542,11 +597,6 @@ targets:
     region: "Global"
     source: "greenhouse"
     slug: "uber"
-
-  - company: "Airbnb (Travel/Aviation)"
-    region: "Global"
-    source: "greenhouse"
-    slug: "airbnb"
 
   - company: "DoorDash (Aviation/Logistics)"
     region: "Global"
