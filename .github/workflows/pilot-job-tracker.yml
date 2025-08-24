@@ -2,8 +2,8 @@ name: Pilot Job Tracker - Enhanced
 
 on:
   schedule:
-    # Run at 00:00, 11:00 and 20:00 UTC every day
-    - cron: '0 0,11,20 * * *'
+    # Run at 00:00, 10:00 and 20:00 UTC every day
+    - cron: '0 0,10,20 * * *'
 
   # Allow manual triggering for testing
   workflow_dispatch:
@@ -25,7 +25,7 @@ on:
 jobs:
   track_jobs:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 25  # Prevent hanging workflows
 
     steps:
       - name: Checkout code
@@ -43,12 +43,6 @@ jobs:
           pip install -r requirements.txt
           playwright install chromium --with-deps
 
-      - name: Restaurar base de datos
-        uses: actions/cache@v3
-        with:
-          path: jobs.db
-          key: jobs-db-cache
-
       - name: Run job tracker with enhanced logging
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -62,11 +56,13 @@ jobs:
           python main.py
           echo "Job tracker completed at $(date)"
 
-      - name: Guardar base de datos en caché
-        uses: actions/cache@v3
+      - name: Upload database as artifact
+        uses: actions/upload-artifact@v4
+        if: always()
         with:
+          name: jobs-database-${{ github.run_number }}-${{ github.run_attempt }}
           path: jobs.db
-          key: jobs-db-cache
+          retention-days: 30
 
       - name: Upload logs as artifact
         uses: actions/upload-artifact@v4
@@ -83,28 +79,28 @@ jobs:
         run: |
           echo "=== DATABASE STATISTICS ==="
           python -c "
-import sqlite3
-conn = sqlite3.connect('jobs.db')
-
-# Total jobs
-total = conn.execute('SELECT COUNT(*) FROM jobs').fetchone()[0]
-print(f'Total jobs in database: {total}')
-
-# Open jobs
-open_jobs = conn.execute('SELECT COUNT(*) FROM jobs WHERE is_open=1').fetchone()[0]
-print(f'Currently open jobs: {open_jobs}')
-
-# Jobs by company (top 10)
-print('\\nTop companies by job count:')
-companies = conn.execute('SELECT company, COUNT(*) as count FROM jobs WHERE is_open=1 GROUP BY company ORDER BY count DESC LIMIT 10').fetchall()
-for company, count in companies:
-    print(f'  {company}: {count} jobs')
-
-# Recent jobs (last 24 hours)
-recent = conn.execute('SELECT COUNT(*) FROM jobs WHERE datetime(first_seen) > datetime(\"now\", \"-1 day\")').fetchone()[0]
-print(f'\\nJobs found in last 24 hours: {recent}')
-
-conn.close()
+          import sqlite3
+          conn = sqlite3.connect('jobs.db')
+          
+          # Total jobs
+          total = conn.execute('SELECT COUNT(*) FROM jobs').fetchone()[0]
+          print(f'Total jobs in database: {total}')
+          
+          # Open jobs
+          open_jobs = conn.execute('SELECT COUNT(*) FROM jobs WHERE is_open=1').fetchone()[0]
+          print(f'Currently open jobs: {open_jobs}')
+          
+          # Jobs by company (top 10)
+          print('\\nTop companies by job count:')
+          companies = conn.execute('SELECT company, COUNT(*) as count FROM jobs WHERE is_open=1 GROUP BY company ORDER BY count DESC LIMIT 10').fetchall()
+          for company, count in companies:
+              print(f'  {company}: {count} jobs')
+          
+          # Recent jobs (last 24 hours)
+          recent = conn.execute('SELECT COUNT(*) FROM jobs WHERE datetime(first_seen) > datetime(\"now\", \"-1 day\")').fetchone()[0]
+          print(f'\\nJobs found in last 24 hours: {recent}')
+          
+          conn.close()
           "
 
       - name: Notify on failure
@@ -114,12 +110,12 @@ conn.close()
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
           python -c "
-import os, requests
-bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
-chat_id = os.getenv('TELEGRAM_CHAT_ID')
-if bot_token and chat_id:
-    message = f'🚨 Pilot Job Tracker FAILED\\nRun: ${{ github.run_number }}\\nTime: $(date)\\nCheck logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
-    requests.post(f'https://api.telegram.org/bot{bot_token}/sendMessage', 
-                  json={'chat_id': chat_id, 'text': message})
+          import os, requests
+          bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
+          chat_id = os.getenv('TELEGRAM_CHAT_ID')
+          if bot_token and chat_id:
+              message = f'🚨 Pilot Job Tracker FAILED\\nRun: ${{ github.run_number }}\\nTime: $(date)\\nCheck logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+              requests.post(f'https://api.telegram.org/bot{bot_token}/sendMessage', 
+                          json={'chat_id': chat_id, 'text': message})
           "
           
